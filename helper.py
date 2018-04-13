@@ -120,7 +120,8 @@ def gen_batch_function(data_folder, image_shape):
                     image, gt_image = flip(image, gt_image)
                 if np.random.random() > 0.5:
                     image, gt_image = translate(image, gt_image)
-                image = adjust_gamma(image, 2.0)
+                if np.random.random() > 0.5:
+                    image = adjust_gamma(image, 2.0)
 
                 gt_bg = np.all(gt_image == background_color, axis=2)
                 gt_bg = gt_bg.reshape(*gt_bg.shape, 1)

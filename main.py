@@ -88,7 +88,7 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
 
     logits = tf.reshape(nn_last_layer, (-1, num_classes))
     correct_label = tf.reshape(correct_label, (-1, num_classes))
-    cross_entropy_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=correct_label))
+    cross_entropy_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=correct_label)) + tf.losses.get_regularization_loss()
 
     train_op = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy_loss)
 
@@ -121,7 +121,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             feed = {input_image: image,
                     correct_label: label,
                     keep_prob: 0.5,
-                    learning_rate: 0.001}
+                    learning_rate: 0.0001}
             _, loss = sess.run([train_op, cross_entropy_loss], feed_dict=feed)
             iterations.append(iteration)
             losses.append(loss)
@@ -132,7 +132,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             iteration += 1
 
     plt.plot(iterations, losses, 'ro')
-    plt.savefig('runs/training.png')
+    plt.savefig('./runs/training.png')
 
 tests.test_train_nn(train_nn)
 
@@ -147,7 +147,7 @@ def run():
     helper.maybe_download_pretrained_vgg(data_dir)
 
     # Hyperparameters
-    epochs = 20
+    epochs = 30
     batch_size = 5
 
     # 20,20,stddev=0.01 - Epoch: 20/20... Iteration: 290 Training loss: 0.09508
